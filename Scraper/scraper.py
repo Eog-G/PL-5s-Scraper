@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 import requests
 import random
 import shutil
+import pandas as pd
+from os.path import exists
 
 class Player():
 
@@ -138,9 +140,14 @@ def generate_5s_team(GK,DF,MF,FW):
 def print_centre(s):
     print(s.center(shutil.get_terminal_size().columns))
 
+def save_data(pl_players):  
+    df = pd.DataFrame([(x.forename, x.surname, x.country, x.number, x.position) for x in pl_players], columns=['Forename', 'Surname', 'Country', 'Number', 'Position'])
+    df.to_excel('players.xlsx', sheet_name='players', index=False)
+
 def main():
 
     pl_players = get_pl_players()
+
     GK, DF, MF, FW = sort_players(pl_players)
 
     
@@ -150,6 +157,10 @@ def main():
     print("\n")
     generate_5s_team(GK, DF, MF, FW)
 
+    if(not exists("players.xlsx")):
+        save_data(pl_players)
+        
+    
 
 main()
 
